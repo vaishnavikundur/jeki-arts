@@ -1,2 +1,12 @@
-node_modules
-node_modules
+# dependencies
+node_modules/
+
+# environment variables
+.env
+backend/.env
+
+# uploads (images/files)
+backend/uploads/
+
+# logs
+npm-debug.log*
