@@ -12,7 +12,7 @@ const Login = () => {
         e.preventDefault();
         try {
             // In a real app, use better auth flow
-            const res = await axios.post('http://localhost:5000/api/auth/login', { username, password });
+            const res = await axios.post('https://jeki-arts.onrender.com/api/auth/login', { username, password });
             if (res.data.userId) {
                 localStorage.setItem('adminAuthenticated', 'true');
                 navigate('/admin');

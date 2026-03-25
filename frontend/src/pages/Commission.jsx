@@ -39,7 +39,7 @@ const Commission = () => {
         }
 
         try {
-            const res = await axios.post('http://localhost:5000/api/orders', data, {
+            const res = await axios.post('https://jeki-arts.onrender.com/api/orders', data, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             setCreatedOrder(res.data);
@@ -60,7 +60,7 @@ const Commission = () => {
         }
 
         try {
-            const res = await axios.put(`http://localhost:5000/api/orders/pay/${createdOrder._id}`, { transactionId });
+            const res = await axios.put(`https://jeki-arts.onrender.com/api/orders/pay/${createdOrder._id}`, { transactionId });
             setCreatedOrder(res.data);
             alert('Payment Proof Submitted! We will verify it shortly.');
             setShowScanner(false);

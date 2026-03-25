@@ -30,7 +30,7 @@ const TrackOrder = () => {
         setError('');
         setOrder(null);
         try {
-            const res = await axios.post('http://localhost:5000/api/orders/track', { email: queryEmail, orderId: queryOrderId });
+            const res = await axios.post('https://jeki-arts.onrender.com/api/orders/track', { email: queryEmail, orderId: queryOrderId });
             setOrder(res.data);
         } catch (err) {
             setError(err.response?.data?.message || 'Order not found');
@@ -47,7 +47,7 @@ const TrackOrder = () => {
     const handleCancel = async () => {
         if (!window.confirm('Are you sure you want to cancel this order?')) return;
         try {
-            const res = await axios.put(`http://localhost:5000/api/orders/cancel-customer/${order._id}`, { email });
+            const res = await axios.put(`https://jeki-arts.onrender.com/api/orders/cancel-customer/${order._id}`, { email });
             setOrder(res.data);
             alert('Order cancelled successfully.');
         } catch (err) {
@@ -67,7 +67,7 @@ const TrackOrder = () => {
         }
 
         try {
-            const res = await axios.put(`http://localhost:5000/api/orders/pay/${order._id}`, { transactionId });
+            const res = await axios.put(`https://jeki-arts.onrender.com/api/orders/pay/${order._id}`, { transactionId });
             setOrder(res.data);
             alert('Payment Proof Submitted! We will verify it shortly.');
             setShowScanner(false);
@@ -79,7 +79,7 @@ const TrackOrder = () => {
     const handleAgree = async () => {
         if (!window.confirm('Are you sure you agree to these price details?')) return;
         try {
-            const res = await axios.put(`http://localhost:5000/api/orders/agree/${order._id}`, { email });
+            const res = await axios.put(`https://jeki-arts.onrender.com/api/orders/agree/${order._id}`, { email });
             setOrder(res.data);
             alert('Agreed! You can now proceed to payment.');
         } catch (err) {

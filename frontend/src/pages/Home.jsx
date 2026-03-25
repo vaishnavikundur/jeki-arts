@@ -17,7 +17,7 @@ const Home = () => {
 
     const fetchArt = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/art');
+            const res = await axios.get('https://jeki-arts.onrender.com/api/art');
             setArtworks(res.data);
         } catch (err) {
             console.error('Error fetching art:', err);
@@ -39,7 +39,7 @@ const Home = () => {
         }
 
         try {
-            await axios.post(`http://localhost:5000/api/art/buy/${selectedArt._id}`, {
+            await axios.post(`https://jeki-arts.onrender.com/api/art/buy/${selectedArt._id}`, {
                 customerName: buyerDetails.name,
                 email: buyerDetails.email,
                 transactionId: buyerDetails.transactionId
@@ -93,7 +93,7 @@ const Home = () => {
                             {artworks.map(art => (
                                 <div key={art._id} style={{ borderRadius: '8px', overflow: 'hidden', boxShadow: '0 5px 15px rgba(0,0,0,0.05)', transition: '0.3s' }}>
                                     <div style={{ height: '300px', overflow: 'hidden' }}>
-                                        <img src={`http://localhost:5000${art.imageUrl}`} alt={art.title} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: '0.3s' }}
+                                        <img src={`https://jeki-arts.onrender.com${art.imageUrl}`} alt={art.title} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: '0.3s' }}
                                             onMouseOver={e => e.currentTarget.style.transform = 'scale(1.05)'}
                                             onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
                                         />
