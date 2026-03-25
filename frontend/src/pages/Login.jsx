@@ -42,7 +42,6 @@ const Login = () => {
 
                 <button type="submit" className="btn" style={{ width: '100%' }}>Login</button>
                 <div style={{ marginTop: '20px', fontSize: '12px', color: '#888', textAlign: 'center' }}>
-                    Default: admin / password123 (after seeding)
                 </div>
             </form>
         </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Upload, CheckCircle } from 'lucide-react';
+import { Upload, CheckCircle, CreditCard, X, Check } from 'lucide-react';
+import scannerImg from '../assets/scanner.jpg';
 
 const Commission = () => {
     const [formData, setFormData] = useState({
@@ -12,6 +13,9 @@ const Commission = () => {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState('');
+    const [showScanner, setShowScanner] = useState(false);
+    const [createdOrder, setCreatedOrder] = useState(null);
+    const [transactionId, setTransactionId] = useState('');
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -35,15 +39,33 @@ const Commission = () => {
         }
 
         try {
-            await axios.post('http://localhost:5000/api/orders', data, {
+            const res = await axios.post('http://localhost:5000/api/orders', data, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
+            setCreatedOrder(res.data);
             setSuccess(true);
             setFormData({ customerName: '', email: '', details: '', referencePhoto: null });
         } catch (err) {
             setError(err.response?.data?.message || 'Error sending order');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handlePaymentConfirm = async () => {
+        if (!createdOrder) return;
+        if (!transactionId.trim()) {
+            alert('Please enter the Transaction ID.');
+            return;
+        }
+
+        try {
+            const res = await axios.put(`http://localhost:5000/api/orders/pay/${createdOrder._id}`, { transactionId });
+            setCreatedOrder(res.data);
+            alert('Payment Proof Submitted! We will verify it shortly.');
+            setShowScanner(false);
+        } catch (err) {
+            alert('Error recording payment. Please try again or contact support.');
         }
     };
 
@@ -59,8 +81,21 @@ const Commission = () => {
                     <div style={{ textAlign: 'center', padding: '40px', background: '#e8f8f5', borderRadius: '8px' }}>
                         <CheckCircle size={50} color="#2ecc71" style={{ marginBottom: '20px' }} />
                         <h2>Request Sent Successfully!</h2>
-                        <p>I will review your request and contact you at {formData.email || 'your email'} shortly.</p>
-                        <button className="btn" style={{ marginTop: '20px' }} onClick={() => setSuccess(false)}>Send Another</button>
+                        <p>I will review your request and contact you shortly.</p>
+
+                        {(createdOrder && (createdOrder.isPaid || createdOrder.transactionId)) ? (
+                            <div style={{ marginTop: '20px', padding: '15px', background: '#d4efdf', borderRadius: '4px', color: '#145a32', fontWeight: 'bold' }}>
+                                <Check size={20} style={{ verticalAlign: 'middle', marginRight: 5 }} /> Payment Submitted for Verification
+                            </div>
+                        ) : (
+                            <button className="btn" style={{ marginTop: '20px', background: '#2980b9', width: '100%' }} onClick={() => setShowScanner(true)}>
+                                <CreditCard size={18} style={{ verticalAlign: 'middle', marginRight: 5 }} /> Pay Now to Fast-Track
+                            </button>
+                        )}
+
+                        <button className="btn" style={{ marginTop: '10px', background: 'transparent', color: '#666', border: '1px solid #ddd' }} onClick={() => setSuccess(false)}>
+                            Send Another Request
+                        </button>
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit} style={{ background: '#fff', padding: '40px', borderRadius: '10px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)' }}>
@@ -106,23 +141,48 @@ const Commission = () => {
                     </form>
                 )}
 
-                <div style={{ marginTop: '50px', textAlign: 'center', borderTop: '1px solid #eee', paddingTop: '40px' }}>
-                    <h3 style={{ marginBottom: '20px' }}>Or Reach Me Directly</h3>
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: '40px', flexWrap: 'wrap' }}>
-                        <div style={{ textAlign: 'center' }}>
-                            <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>WhatsApp / Phone</p>
-                            <a href="https://wa.me/15551234567" target="_blank" rel="noopener noreferrer" style={{ color: '#e67e22' }}>+1 (555) 123-4567</a>
-                        </div>
-                        <div style={{ textAlign: 'center' }}>
-                            <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>Email</p>
-                            <a href="mailto:contact@elenaartistry.com" style={{ color: '#e67e22' }}>contact@elenaartistry.com</a>
-                        </div>
-                        <div style={{ textAlign: 'center' }}>
-                            <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>Instagram</p>
-                            <a href="https://instagram.com/elena_artistry" target="_blank" rel="noopener noreferrer" style={{ color: '#e67e22' }}>@elena_artistry</a>
+                {showScanner && (
+                    <div style={{
+                        position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+                        background: 'rgba(0,0,0,0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
+                    }}>
+                        <div className="fade-in" style={{
+                            background: '#fff', padding: '30px', borderRadius: '12px', width: '90%', maxWidth: '400px',
+                            textAlign: 'center', position: 'relative', boxShadow: '0 20px 50px rgba(0,0,0,0.2)',
+                            maxHeight: '90vh', overflowY: 'auto'
+                        }}>
+                            <button onClick={() => setShowScanner(false)} style={{
+                                position: 'absolute', top: '10px', right: '10px', background: 'none', border: 'none',
+                                cursor: 'pointer', color: '#888'
+                            }}>
+                                <X size={24} />
+                            </button>
+
+                            <h2 style={{ marginBottom: '20px' }}>Scan to Pay</h2>
+                            <div style={{ padding: '10px', border: '1px solid #eee', borderRadius: '8px', display: 'inline-block', marginBottom: '20px' }}>
+                                <img src={scannerImg} alt="Payment Scanner" style={{ maxWidth: '100%', height: 'auto', display: 'block' }} />
+                            </div>
+
+                            <p style={{ marginBottom: '20px', color: '#666', fontSize: '0.9rem' }}>
+                                Scan the QR code, make the payment, and enter the Reference/Transaction ID below.
+                            </p>
+
+                            <input
+                                type="text"
+                                placeholder="Enter Transaction ID / Ref No."
+                                value={transactionId}
+                                onChange={(e) => setTransactionId(e.target.value)}
+                                style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '4px', marginBottom: '20px' }}
+                            />
+
+                            <button onClick={handlePaymentConfirm} className="btn" style={{ width: '100%', background: '#27ae60' }}>
+                                <Check size={18} style={{ verticalAlign: 'middle', marginRight: 5 }} /> Submit Payment Proof
+                            </button>
                         </div>
                     </div>
-                </div>
+                )}
+
+
             </div>
         </div>
     );

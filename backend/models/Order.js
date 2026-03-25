@@ -5,7 +5,11 @@ const orderSchema = new mongoose.Schema({
     email: { type: String, required: true },
     details: { type: String, required: true },
     referencePhoto: { type: String }, // Path to uploaded file
-    status: { type: String, enum: ['Pending', 'Accepted', 'Declined', 'Completed'], default: 'Pending' },
+    priceDetails: { type: String }, // Customized price details provided by admin
+    customerAgreed: { type: Boolean, default: false }, // Whether customer agreed to price
+    status: { type: String, enum: ['Pending', 'Accepted', 'Declined', 'Cancelled', 'Completed'], default: 'Pending' },
+    isPaid: { type: Boolean, default: false },
+    transactionId: { type: String },
     createdAt: { type: Date, default: Date.now }
 });
 

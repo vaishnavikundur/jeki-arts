@@ -21,7 +21,7 @@ router.post('/seed', async (req, res) => {
     try {
         const exists = await Admin.findOne({ username: 'admin' });
         if (exists) return res.send('Admin already exists');
-        const admin = new Admin({ username: 'admin', password: 'password123' });
+        const admin = new Admin({ username: 'vaishnavi', password: 'kundur123' });
         await admin.save();
         res.send('Admin created');
     } catch (err) {
