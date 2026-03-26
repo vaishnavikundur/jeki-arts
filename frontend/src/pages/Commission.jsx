@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../api/api';
 import { Upload, CheckCircle, CreditCard, X, Check } from 'lucide-react';
 import scannerImg from '../assets/scanner.jpg';
 
@@ -39,7 +39,7 @@ const Commission = () => {
         }
 
         try {
-            const res = await axios.post('https://jeki-arts.onrender.com/api/orders', data, {
+            const res = await api.post('/api/orders', data, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             setCreatedOrder(res.data);
@@ -60,7 +60,7 @@ const Commission = () => {
         }
 
         try {
-            const res = await axios.put(`https://jeki-arts.onrender.com/api/orders/pay/${createdOrder._id}`, { transactionId });
+            const res = await api.put(`/api/orders/pay/${createdOrder._id}`, { transactionId });
             setCreatedOrder(res.data);
             alert('Payment Proof Submitted! We will verify it shortly.');
             setShowScanner(false);

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../api/api';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
@@ -12,7 +12,7 @@ const Login = () => {
         e.preventDefault();
         try {
             // In a real app, use better auth flow
-            const res = await axios.post('https://jeki-arts.onrender.com/api/auth/login', { username, password });
+            const res = await api.post('/api/auth/login', { username, password });
             if (res.data.userId) {
                 localStorage.setItem('adminAuthenticated', 'true');
                 navigate('/admin');

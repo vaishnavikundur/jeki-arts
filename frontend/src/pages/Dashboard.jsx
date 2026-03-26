@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/api';
 import { useNavigate } from 'react-router-dom';
 import { Image, List, Check, X, Upload } from 'lucide-react';
 
@@ -22,7 +22,7 @@ const Dashboard = () => {
 
     const fetchOrders = async () => {
         try {
-            const res = await axios.get('https://jeki-arts.onrender.com/api/orders');
+            const res = await api.get('/api/orders');
             setOrders(res.data);
         } catch (err) {
             console.error(err);
@@ -31,7 +31,7 @@ const Dashboard = () => {
 
     const fetchGallery = async () => {
         try {
-            const res = await axios.get('https://jeki-arts.onrender.com/api/art');
+            const res = await api.get('/api/art');
             setGallery(res.data);
         } catch (err) {
             console.error(err);
@@ -48,7 +48,7 @@ const Dashboard = () => {
         }
 
         try {
-            await axios.put(`https://jeki-arts.onrender.com/api/orders/${id}/status`, { status, priceDetails });
+            await api.put(`/api/orders/${id}/status`, { status, priceDetails });
             fetchOrders(); // refresh
         } catch (Err) {
             alert('Error updating status');
@@ -58,7 +58,7 @@ const Dashboard = () => {
     const handleDeleteArt = async (id) => {
         if (!window.confirm('Are you sure you want to delete this artwork?')) return;
         try {
-            await axios.delete(`https://jeki-arts.onrender.com/api/art/${id}`);
+            await api.delete(`/api/art/${id}`);
             fetchGallery();
             alert('Artwork Deleted');
         } catch (err) {
@@ -78,10 +78,10 @@ const Dashboard = () => {
 
         try {
             if (editId) {
-                await axios.put(`https://jeki-arts.onrender.com/api/art/${editId}`, data);
+                await api.put(`/api/art/${editId}`, data);
                 alert('Artwork Updated!');
             } else {
-                await axios.post('https://jeki-arts.onrender.com/api/art', data);
+                await api.post('/api/art', data);
                 alert('Artwork Uploaded!');
             }
             setArtData({ title: '', description: '', category: 'Oil Painting', price: '', image: null, status: 'Available' });
@@ -144,8 +144,8 @@ const Dashboard = () => {
                                                 <td style={{ padding: '15px 10px' }}>
                                                     {order.referencePhoto ? (
                                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                                                            <a href={`https://jeki-arts.onrender.com${order.referencePhoto}`} target="_blank" rel="noopener noreferrer" style={{ color: '#e67e22', fontSize: '0.9rem' }}>View</a>
-                                                            <a href={`https://jeki-arts.onrender.com${order.referencePhoto}`} download={`Reference_${order._id}`} style={{ color: '#3498db', fontSize: '0.9rem' }}>Download</a>
+                                                            <a href={`${api.defaults.baseURL}${order.referencePhoto}`} target="_blank" rel="noopener noreferrer" style={{ color: '#e67e22', fontSize: '0.9rem' }}>View</a>
+                                                            <a href={`${api.defaults.baseURL}${order.referencePhoto}`} download={`Reference_${order._id}`} style={{ color: '#3498db', fontSize: '0.9rem' }}>Download</a>
                                                         </div>
                                                     ) : 'None'}
                                                 </td>
@@ -173,7 +173,7 @@ const Dashboard = () => {
                                                     <button title="Delete Permanently" onClick={async () => {
                                                         if (!window.confirm('Delete this order permanently?')) return;
                                                         try {
-                                                            await axios.delete(`https://jeki-arts.onrender.com/api/orders/${order._id}`);
+                                                            await api.delete(`/api/orders/${order._id}`);
                                                             fetchOrders();
                                                         } catch (e) { alert('Error deleting order'); }
                                                     }} style={{ background: 'transparent', border: '1px solid #c0392b', color: '#c0392b', padding: '2px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem', display: 'block', width: '100%' }}>Delete</button>
@@ -254,7 +254,7 @@ const Dashboard = () => {
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '20px', marginTop: '20px' }}>
                                 {gallery.map(art => (
                                     <div key={art._id} style={{ border: '1px solid #eee', borderRadius: '8px', padding: '10px' }}>
-                                        <img src={`https://jeki-arts.onrender.com${art.imageUrl}`} alt={art.title} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '4px' }} />
+                                        <img src={`${api.defaults.baseURL}${art.imageUrl}`} alt={art.title} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '4px' }} />
                                         <h4 style={{ margin: '10px 0 5px', fontSize: '1rem' }}>{art.title}</h4>
                                         <p style={{ margin: '0 0 10px', color: '#666', fontSize: '0.9rem' }}>${art.price}</p>
                                         <p style={{ fontSize: '0.8rem', color: art.status === 'Available' ? 'green' : 'red', marginBottom: '10px' }}>{art.status}</p>
